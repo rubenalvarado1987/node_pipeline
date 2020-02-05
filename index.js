@@ -10,6 +10,26 @@ const app = express();
 const port = process.env.PORT || 5000;
 const host = process.env.ROOTPATH || "localhost:" + port;
 
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host     : 'database-1.ce17alfb0vwr.sa-east-1.rds.amazonaws.com',
+  user     : 'admin',
+  password : 'Gsx400..',
+  port     : 3306,
+  database : "test",
+
+});
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('Database connection failed: ' + err.stack);
+    return;
+  }
+
+  console.log('Connected to database.');
+});
+
 app
   .use(
     helmet({
@@ -52,10 +72,20 @@ app
   )
   .use(methodOverride()); */
 
-app.all("/*", (req, res, next) => {
+
+app.all("/", (req, res, next) => {
   // Just send the index.html for other files to support HTML5Mode
   res.sendFile("index.html", {
     root: path.join(__dirname, "/")
+  });
+});
+
+app.get('/personas', function(req, res) {
+  
+  connection.query('SELECT * FROM persona', function (error, results, fields) {
+    if (error) throw error;
+    console.log('personas: ', results);
+    res.json(results);
   });
 });
 
@@ -69,33 +99,5 @@ server.listen(port, err => {
   );
 });
 
-var mysql = require('mysql');
 
-var connection = mysql.createConnection({
-  host     : 'database-1.ce17alfb0vwr.sa-east-1.rds.amazonaws.com',
-  user     : 'admin',
-  password : 'Gsx400..',
-  port     : 3306,
-  database : "test",
-
-});
-
-connection.connect(function(err) {
-  if (err) {
-    console.error('Database connection failed: ' + err.stack);
-    return;
-  }
-
- 
-  
-
-  console.log('Connected to database.');
-});
-
-
-connection.query('SELECT * FROM persona', function (error, results, fields) {
-  if (error) throw error;
-  console.log('personas: ', results);
-});
-
-connection.end();
+//connection.end();
