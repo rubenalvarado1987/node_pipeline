@@ -68,3 +68,34 @@ server.listen(port, err => {
     `From Server: App iniciada exitósamente y corriendo en puerto: ${port}`
   );
 });
+
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host     : 'database-1.ce17alfb0vwr.sa-east-1.rds.amazonaws.com',
+  user     : 'admin',
+  password : 'Gsx400..',
+  port     : 3306,
+  database : "test",
+
+});
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('Database connection failed: ' + err.stack);
+    return;
+  }
+
+ 
+  
+
+  console.log('Connected to database.');
+});
+
+
+connection.query('SELECT * FROM persona', function (error, results, fields) {
+  if (error) throw error;
+  console.log('personas: ', results);
+});
+
+connection.end();
